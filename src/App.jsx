@@ -11,20 +11,23 @@ export default function App() {
   const [toCur, setToCur] = useState("EUR");
   const [output, setOutput] = useState("0.00");
 
-  function handleConvert(amount, from, to) {
-    if (amount < 1) return;
+  function handleConvert() {
+    if (!amount) return;
 
-    console.log(rates);
+    // console.log(rates);
 
-    setOutput(rates[to] * amount);
+    //   const rate = rates?.[toCur] / rates?.[fromCur];
+    const result = (amount / rates[fromCur]) * rates[toCur];
+    setOutput(result.toFixed(4));
 
-    console.log(from, rates[from]);
-    console.log(to, rates[to]);
+    // console.log(from, rates[from]);
+    // console.log(to, rates[to]);
 
     resetAmount();
   }
 
   function resetAmount() {
+    if (!amount) return;
     setAmount("");
   }
 
@@ -52,21 +55,19 @@ export default function App() {
   }, []);
 
   // enter key Event
-  // useEffect(() => {
-  //   function callback(e) {
-  //     if (e.code === "Enter" && amount) {
-  //       handleConvert(amount, fromCur, toCur);
-  //       console.log("callback run on enter key");
-  //     }
-  //   }
+  useEffect(() => {
+    function callback(e) {
+      if (e.code === "Enter" && amount) {
+        handleConvert(amount, fromCur, toCur);
+      }
+    }
 
-  //   document.addEventListener("keydown", callback);
+    document.addEventListener("keydown", callback);
 
-  //   return () => {
-  //     document.removeEventListener("keydown", callback);
-  //     console.log("CLEANING UP");
-  //   };
-  // }, [amount, fromCur, toCur, handleConvert]);
+    return () => {
+      document.removeEventListener("keydown", callback);
+    };
+  }, [amount, fromCur, toCur, handleConvert]);
 
   return (
     <div className="lg-page">
@@ -79,7 +80,8 @@ export default function App() {
           <AmountInput
             onSetAmount={setAmount}
             amount={amount}
-            onSubmit={() => handleConvert(amount, fromCur, toCur)}
+            fromCur={fromCur}
+            onSubmit={handleConvert}
           />
           <Converter
             onSetToCur={setToCur}
@@ -91,10 +93,7 @@ export default function App() {
 
           {/* Buttons  */}
           <div className="lg-actions">
-            <Button
-              className="lg-btn lg-btn-primary"
-              onClick={() => handleConvert(amount, fromCur, toCur)}
-            >
+            <Button className="lg-btn lg-btn-primary" onClick={handleConvert}>
               Convert
             </Button>
             <Button className="lg-btn lg-btn-ghost" onClick={resetAmount}>
@@ -132,7 +131,7 @@ function Header() {
   );
 }
 
-function AmountInput({ amount, onSetAmount, onSubmit }) {
+function AmountInput({ fromCur, amount, onSetAmount, onSubmit }) {
   return (
     <div className="lg-row lg-row-amount">
       <label className="lg-label" htmlFor="amount">
@@ -141,7 +140,7 @@ function AmountInput({ amount, onSetAmount, onSubmit }) {
 
       <div className="lg-field lg-amount">
         <span className="lg-prefix" aria-hidden="true">
-          $
+          {getCurrencySymbol(fromCur)}
         </span>
         <input
           id="amount"
@@ -155,19 +154,18 @@ function AmountInput({ amount, onSetAmount, onSubmit }) {
             !isNaN(Number(e.target.value)) &&
             onSetAmount(e.target.value > 0 ? e.target.value : "")
           }
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && amount)
-              (onSubmit, console.log("enter pressed"));
-          }}
+          // onKeyDown={(e) => {
+          //   if (e.key === "Enter" && amount) onSubmit();
+          // }}
         />
-        <button
+        <Button
           className="lg-chip"
           type="button"
-          aria-label="Max"
+          ariaLabel="Max"
           onClick={() => onSetAmount(90000)}
         >
           Max
-        </button>
+        </Button>
       </div>
 
       <p className="lg-hint">Tip: decimals are allowed, example 1200.50</p>
@@ -288,7 +286,9 @@ function ResultOutput({ output, rates, fromCur, toCur }) {
         <span className="lg-pill">Updated just now</span>
       </div>
       <div className="lg-result-value">
-        <span className="lg-result-amt">{output}</span>
+        <span className="lg-result-amt">
+          {getCurrencySymbol(toCur)} {output}
+        </span>
         <span className="lg-result-rate">{resultRate}</span>
       </div>
     </section>
@@ -310,9 +310,14 @@ function FootNote() {
   );
 }
 
-function Button({ children, onClick, className }) {
+function Button({ children, onClick, className, ariaLabel }) {
   return (
-    <button className={className} type="button" onClick={onClick}>
+    <button
+      className={className}
+      aria-label={ariaLabel}
+      type="button"
+      onClick={onClick}
+    >
       {children}
     </button>
   );
