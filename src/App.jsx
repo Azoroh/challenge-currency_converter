@@ -5,7 +5,6 @@ const API_KEY = "258f6076f7f0e92889f13e43";
 
 export default function App() {
   const [rates, setRates] = useState(null);
-
   const [amount, setAmount] = useState("");
   const [fromCur, setFromCur] = useState("USD");
   const [toCur, setToCur] = useState("EUR");
@@ -14,21 +13,14 @@ export default function App() {
   function handleConvert() {
     if (!amount) return;
 
-    // console.log(rates);
-
-    //   const rate = rates?.[toCur] / rates?.[fromCur];
     const result = (amount / rates[fromCur]) * rates[toCur];
     setOutput(result.toFixed(4));
-
-    // console.log(from, rates[from]);
-    // console.log(to, rates[to]);
-
-    resetAmount();
   }
 
-  function resetAmount() {
+  function handleReset() {
     if (!amount) return;
     setAmount("");
+    setOutput("0.00");
   }
 
   function handleSwap() {
@@ -57,8 +49,9 @@ export default function App() {
   // enter key Event
   useEffect(() => {
     function callback(e) {
-      if (e.code === "Enter" && amount) {
-        handleConvert(amount, fromCur, toCur);
+      if (e.key === "Enter" && amount) {
+        const result = (amount / rates[fromCur]) * rates[toCur];
+        setOutput(result.toFixed(2));
       }
     }
 
@@ -67,7 +60,7 @@ export default function App() {
     return () => {
       document.removeEventListener("keydown", callback);
     };
-  }, [amount, fromCur, toCur, handleConvert]);
+  }, [amount, fromCur, toCur, rates]);
 
   return (
     <div className="lg-page">
@@ -96,7 +89,7 @@ export default function App() {
             <Button className="lg-btn lg-btn-primary" onClick={handleConvert}>
               Convert
             </Button>
-            <Button className="lg-btn lg-btn-ghost" onClick={resetAmount}>
+            <Button className="lg-btn lg-btn-ghost" onClick={handleReset}>
               Reset
             </Button>
           </div>
