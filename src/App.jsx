@@ -9,9 +9,9 @@ export default function App() {
   const [error, setError] = useState("");
 
   const [amount, setAmount] = useState("");
-  const [valCur, setValCur] = useState("EUR");
-  const [convertCur, setConvertCur] = useState("USD");
-  const [output, setOutput] = useState("");
+  const [fromCur, setFromCur] = useState("EUR");
+  const [toCur, setTocur] = useState("USD");
+  const [output, setOutput] = useState("0.00");
 
   // useEffect(() => {
   //   async function getCurrency() {
@@ -52,7 +52,8 @@ export default function App() {
   function handleConvert(amount, from, to) {
     if (amount < 1) return;
 
-    setOutput(rates[from]);
+    console.log(rates[from]);
+    console.log(to);
   }
 
   return (
@@ -74,7 +75,7 @@ export default function App() {
           <div className="lg-glow" aria-hidden="true"></div>
 
           <div className="lg-row lg-row-amount">
-            <label className="lg-label" for="amount">
+            <label className="lg-label" htmlFor="amount">
               Amount
             </label>
 
@@ -86,8 +87,8 @@ export default function App() {
                 id="amount"
                 className="lg-input"
                 type="text"
-                inputmode="decimal"
-                autocomplete="off"
+                inputMode="decimal"
+                autoComplete="off"
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) =>
@@ -112,7 +113,7 @@ export default function App() {
 
           <div className="lg-grid">
             <div className="lg-row">
-              <label className="lg-label" for="from">
+              <label className="lg-label" htmlFor="from">
                 From
               </label>
 
@@ -121,11 +122,13 @@ export default function App() {
                   id="from"
                   className="lg-select"
                   aria-label="Convert from currency"
+                  value={fromCur}
+                  onChange={(e) => {
+                    setFromCur(e.target.value);
+                  }}
                 >
-                  <option value="NGN" selected>
-                    NGN — Nigerian Naira
-                  </option>
                   <option value="USD">USD — US Dollar</option>
+                  <option value="NGN">NGN — Nigerian Naira</option>
                   <option value="EUR">EUR — Euro</option>
                   <option value="GBP">GBP — British Pound</option>
                   <option value="CAD">CAD — Canadian Dollar</option>
@@ -136,9 +139,9 @@ export default function App() {
                     <path
                       d="M5 7.5L10 12.5L15 7.5"
                       stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
                   </svg>
                 </span>
@@ -151,23 +154,23 @@ export default function App() {
                   <path
                     d="M7 7h12l-2.5-2.5"
                     stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
                   <path
                     d="M17 17H5l2.5 2.5"
                     stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </button>
             </div>
 
             <div className="lg-row">
-              <label className="lg-label" for="to">
+              <label className="lg-label" htmlFor="to">
                 To
               </label>
 
@@ -176,10 +179,12 @@ export default function App() {
                   id="to"
                   className="lg-select"
                   aria-label="Convert to currency"
+                  value={toCur}
+                  onChange={(e) => {
+                    setTocur(e.target.value);
+                  }}
                 >
-                  <option value="USD" selected>
-                    USD — US Dollar
-                  </option>
+                  <option value="USD">USD — US Dollar</option>
                   <option value="NGN">NGN — Nigerian Naira</option>
                   <option value="EUR">EUR — Euro</option>
                   <option value="GBP">GBP — British Pound</option>
@@ -191,9 +196,9 @@ export default function App() {
                     <path
                       d="M5 7.5L10 12.5L15 7.5"
                       stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
                   </svg>
                 </span>
@@ -202,7 +207,11 @@ export default function App() {
           </div>
 
           <div className="lg-actions">
-            <button className="lg-btn lg-btn-primary" type="button">
+            <button
+              className="lg-btn lg-btn-primary"
+              type="button"
+              onClick={() => handleConvert(amount, fromCur, toCur)}
+            >
               Convert
             </button>
             <button className="lg-btn lg-btn-ghost" type="button">
@@ -216,7 +225,7 @@ export default function App() {
               <span className="lg-pill">Updated just now</span>
             </div>
             <div className="lg-result-value">
-              <span className="lg-result-amt">$0.00</span>
+              <span className="lg-result-amt">{output}</span>
               <span className="lg-result-rate">1 NGN ≈ $0.0000</span>
             </div>
           </section>
@@ -224,7 +233,7 @@ export default function App() {
           <span className="foot-note">
             <a
               className="repo-link"
-              href="https://github.com/Azoroh"
+              href="https://github.com/Azoroh?tab=repositories"
               target="_blank"
               rel="noopener noreferrer"
             >
