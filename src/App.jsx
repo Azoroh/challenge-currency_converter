@@ -102,40 +102,16 @@ export default function App() {
             </Button>
           </div>
 
-          <ResultOutput output={output} />
-          <section className="lg-result" aria-label="Result">
-            <div className="lg-result-top">
-              <span className="lg-result-label">Result</span>
-              <span className="lg-pill">Updated just now</span>
-            </div>
-            <div className="lg-result-value">
-              <span className="lg-result-amt">{output}</span>
-              <span className="lg-result-rate">1 NGN ≈ $0.0000</span>
-              {/* <span className="lg-result-rate">{resultRate}</span> */}
-            </div>
-          </section>
-
-          <span className="foot-note">
-            <a
-              className="repo-link"
-              href="https://github.com/Azoroh?tab=repositories"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Azoroh/Repo &rarr;
-            </a>
-          </span>
+          <ResultOutput
+            output={output}
+            rates={rates}
+            fromCur={fromCur}
+            toCur={toCur}
+          />
+          <FootNote />
         </main>
       </div>
     </div>
-  );
-}
-
-function Button({ children, onClick, className }) {
-  return (
-    <button className={className} type="button" onClick={onClick}>
-      {children}
-    </button>
   );
 }
 
@@ -302,7 +278,10 @@ function Converter({ onSetToCur, onSetFromCur, fromCur, toCur, onSwap }) {
     </div>
   );
 }
-function ResultOutput({ output }) {
+
+function ResultOutput({ output, rates, fromCur, toCur }) {
+  const resultRate = `1 ${fromCur} ≈ ${getCurrencySymbol(toCur)} ${rates?.[toCur] * rates?.[fromCur]}`;
+
   return (
     <section className="lg-result" aria-label="Result">
       <div className="lg-result-top">
@@ -311,9 +290,43 @@ function ResultOutput({ output }) {
       </div>
       <div className="lg-result-value">
         <span className="lg-result-amt">{output}</span>
-        <span className="lg-result-rate">1 NGN ≈ $0.0000</span>
-        {/* <span className="lg-result-rate">{resultRate}</span> */}
+        <span className="lg-result-rate">{resultRate}</span>
       </div>
     </section>
   );
+}
+
+function FootNote() {
+  return (
+    <span className="foot-note">
+      <a
+        className="repo-link"
+        href="https://github.com/Azoroh?tab=repositories"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Azoroh/Repo &rarr;
+      </a>
+    </span>
+  );
+}
+
+function Button({ children, onClick, className }) {
+  return (
+    <button className={className} type="button" onClick={onClick}>
+      {children}
+    </button>
+  );
+}
+
+function getCurrencySymbol(code) {
+  const symbols = {
+    USD: "$",
+    NGN: "₦",
+    CAD: "C$",
+    EUR: "€",
+    GBP: "£",
+  };
+
+  return symbols[code.toUpperCase()] || code;
 }
