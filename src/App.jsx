@@ -11,7 +11,7 @@ export default function App() {
   const [output, setOutput] = useState("0.00");
 
   function handleConvert(amountInput, from, to) {
-    if (!amount) return;
+    if (!amount || !rates) return;
 
     const result = (Number(amountInput) / rates[from]) * rates[to];
     setOutput(result.toFixed(4));
