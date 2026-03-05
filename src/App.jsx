@@ -11,39 +11,6 @@ export default function App() {
   const [toCur, setToCur] = useState("EUR");
   const [output, setOutput] = useState("0.00");
 
-  useEffect(() => {
-    async function getCurrency() {
-      try {
-        const res = await fetch(
-          `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD
-        `,
-        );
-
-        const data = await res.json();
-        setRates(data.conversion_rates);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    getCurrency();
-  }, []);
-
-  // // enter key Event
-  // useEffect(() => {
-  //   function callback(e) {
-  //     if (e.code === "Enter") handleConvert(amount, fromCur, toCur);
-  //     console.log("callback run on enter key");
-  //   }
-
-  //   document.addEventListener("keydown", callback);
-
-  //   return () => {
-  //     document.removeEventListener("keydown", callback);
-  //     console.log("CLEANING UP");
-  //   };
-  // }, [amount, fromCur, toCur]);
-
   function handleConvert(amount, from, to) {
     if (amount < 1) return;
 
@@ -66,6 +33,41 @@ export default function App() {
     setToCur(fromCur);
   }
 
+  useEffect(() => {
+    async function getCurrency() {
+      try {
+        const res = await fetch(
+          `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD
+        `,
+        );
+
+        const data = await res.json();
+        setRates(data.conversion_rates);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    getCurrency();
+  }, []);
+
+  // enter key Event
+  // useEffect(() => {
+  //   function callback(e) {
+  //     if (e.code === "Enter" && amount) {
+  //       handleConvert(amount, fromCur, toCur);
+  //       console.log("callback run on enter key");
+  //     }
+  //   }
+
+  //   document.addEventListener("keydown", callback);
+
+  //   return () => {
+  //     document.removeEventListener("keydown", callback);
+  //     console.log("CLEANING UP");
+  //   };
+  // }, [amount, fromCur, toCur, handleConvert]);
+
   return (
     <div className="lg-page">
       <div className="lg-shell">
@@ -74,7 +76,11 @@ export default function App() {
         <main className="lg-card" role="region" aria-label="Currency converter">
           <div className="lg-glow" aria-hidden="true"></div>
 
-          <AmountInput onSetAmount={setAmount} amount={amount} />
+          <AmountInput
+            onSetAmount={setAmount}
+            amount={amount}
+            onSubmit={() => handleConvert(amount, fromCur, toCur)}
+          />
           <Converter
             onSetToCur={setToCur}
             onSetFromCur={setFromCur}
@@ -126,7 +132,7 @@ function Header() {
   );
 }
 
-function AmountInput({ amount, onSetAmount }) {
+function AmountInput({ amount, onSetAmount, onSubmit }) {
   return (
     <div className="lg-row lg-row-amount">
       <label className="lg-label" htmlFor="amount">
@@ -149,6 +155,10 @@ function AmountInput({ amount, onSetAmount }) {
             !isNaN(Number(e.target.value)) &&
             onSetAmount(e.target.value > 0 ? e.target.value : "")
           }
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && amount)
+              (onSubmit, console.log("enter pressed"));
+          }}
         />
         <button
           className="lg-chip"
