@@ -66,12 +66,6 @@ export default function App() {
     setToCur(fromCur);
   }
 
-  // let resultRate;
-  // async function getResultRate() {
-  //   resultRate = `1 ${fromCur} ≈ $${rates[toCur]}`;
-  // }
-  // const resultRate = `1 ${fromCur} ≈ $${rates[toCur]}`;
-
   return (
     <div className="lg-page">
       <div className="lg-shell">
@@ -108,6 +102,7 @@ export default function App() {
             fromCur={fromCur}
             toCur={toCur}
           />
+
           <FootNote />
         </main>
       </div>
@@ -130,16 +125,6 @@ function Header() {
     </header>
   );
 }
-
-// function Main() {
-//   return (
-<main className="lg-card" role="region" aria-label="Currency converter">
-  <AmountInput />
-  <Converter />
-  <ResultOutput />
-</main>;
-//   )
-// }
 
 function AmountInput({ amount, onSetAmount }) {
   return (
@@ -280,7 +265,11 @@ function Converter({ onSetToCur, onSetFromCur, fromCur, toCur, onSwap }) {
 }
 
 function ResultOutput({ output, rates, fromCur, toCur }) {
-  const resultRate = `1 ${fromCur} ≈ ${getCurrencySymbol(toCur)} ${rates?.[toCur] * rates?.[fromCur]}`;
+  const rate = rates?.[toCur] / rates?.[fromCur];
+
+  const resultRate = rate
+    ? `1 ${fromCur} ≈ ${getCurrencySymbol(toCur)} ${rate.toFixed(4)}`
+    : "";
 
   return (
     <section className="lg-result" aria-label="Result">
@@ -330,3 +319,13 @@ function getCurrencySymbol(code) {
 
   return symbols[code.toUpperCase()] || code;
 }
+
+// function Main() {
+//   return (
+//     <main className="lg-card" role="region" aria-label="Currency converter">
+//       <AmountInput />
+//       <Converter />
+//       <ResultOutput />
+//     </main>
+//   );
+// }
