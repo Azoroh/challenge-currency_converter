@@ -10,10 +10,10 @@ export default function App() {
   const [toCur, setToCur] = useState("EUR");
   const [output, setOutput] = useState("0.00");
 
-  function handleConvert() {
+  function handleConvert(amountInput, from, to) {
     if (!amount) return;
 
-    const result = (amount / rates[fromCur]) * rates[toCur];
+    const result = (Number(amountInput) / rates[from]) * rates[to];
     setOutput(result.toFixed(4));
   }
 
@@ -74,14 +74,15 @@ export default function App() {
             onSetAmount={setAmount}
             amount={amount}
             fromCur={fromCur}
-            onSubmit={handleConvert}
           />
           <Converter
             onSetToCur={setToCur}
             onSetFromCur={setFromCur}
+            amount={amount}
             fromCur={fromCur}
             toCur={toCur}
             onSwap={handleSwap}
+            onConvert={handleConvert}
           />
 
           {/* Buttons  */}
@@ -124,7 +125,7 @@ function Header() {
   );
 }
 
-function AmountInput({ fromCur, amount, onSetAmount, onSubmit }) {
+function AmountInput({ fromCur, amount, onSetAmount }) {
   return (
     <div className="lg-row lg-row-amount">
       <label className="lg-label" htmlFor="amount">
@@ -166,7 +167,15 @@ function AmountInput({ fromCur, amount, onSetAmount, onSubmit }) {
   );
 }
 
-function Converter({ onSetToCur, onSetFromCur, fromCur, toCur, onSwap }) {
+function Converter({
+  onSetToCur,
+  onSetFromCur,
+  amount,
+  fromCur,
+  toCur,
+  onSwap,
+  onConvert,
+}) {
   return (
     <div className="lg-grid">
       <div className="lg-row">
@@ -181,14 +190,16 @@ function Converter({ onSetToCur, onSetFromCur, fromCur, toCur, onSwap }) {
             aria-label="Convert from currency"
             value={fromCur}
             onChange={(e) => {
-              onSetFromCur(e.target.value);
+              const newFrom = e.target.value;
+              onSetFromCur(newFrom);
+              onConvert(amount, newFrom, toCur);
             }}
           >
-            <option value="USD">USD — US Dollar</option>
-            <option value="NGN">NGN — Nigerian Naira</option>
-            <option value="EUR">EUR — Euro</option>
-            <option value="GBP">GBP — British Pound</option>
-            <option value="CAD">CAD — Canadian Dollar</option>
+            <option value="USD">USD - US Dollar</option>
+            <option value="NGN">NGN - Nigerian Naira</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="GBP">GBP - British Pound</option>
+            <option value="CAD">CAD - Canadian Dollar</option>
           </select>
 
           <span className="lg-chev" aria-hidden="true">
@@ -238,14 +249,16 @@ function Converter({ onSetToCur, onSetFromCur, fromCur, toCur, onSwap }) {
             aria-label="Convert to currency"
             value={toCur}
             onChange={(e) => {
-              onSetToCur(e.target.value);
+              const newTo = e.target.value;
+              onSetToCur(newTo);
+              onConvert(amount, fromCur, newTo);
             }}
           >
-            <option value="USD">USD — US Dollar</option>
-            <option value="NGN">NGN — Nigerian Naira</option>
-            <option value="EUR">EUR — Euro</option>
-            <option value="GBP">GBP — British Pound</option>
-            <option value="CAD">CAD — Canadian Dollar</option>
+            <option value="USD">USD - US Dollar</option>
+            <option value="NGN">NGN - Nigerian Naira</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="GBP">GBP - British Pound</option>
+            <option value="CAD">CAD - Canadian Dollar</option>
           </select>
 
           <span className="lg-chev" aria-hidden="true">
