@@ -11,7 +11,7 @@ export default function App() {
   const [output, setOutput] = useState("0.00");
 
   function handleConvert(amountInput, from, to) {
-    if (!amount || !rates) return;
+    if (!amountInput || !rates) return;
 
     const result = (Number(amountInput) / rates[from]) * rates[to];
     setOutput(result.toFixed(4));
@@ -87,7 +87,10 @@ export default function App() {
 
           {/* Buttons  */}
           <div className="lg-actions">
-            <Button className="lg-btn lg-btn-primary" onClick={handleConvert}>
+            <Button
+              className="lg-btn lg-btn-primary"
+              onClick={() => handleConvert(amount, fromCur, toCur)}
+            >
               Convert
             </Button>
             <Button className="lg-btn lg-btn-ghost" onClick={handleReset}>
